@@ -4,11 +4,14 @@ from numpy.fft import fft, fftfreq
 import os
 import time
 import sounddevice as sd 
+import matplotlib.pyplot as plt
+
+
 
 
 
 class Frequence:
-    """Calcul de la fréquence d'une note ; le format d'entrée est np.array"""
+    """Calcul de la fréquence d'une note ; le format d'entrée est un tableau numpy"""
 
 
     def __init__(self, enregistrement):
@@ -18,7 +21,9 @@ class Frequence:
 
 
     def format_tableau(self):
-        
+        """definit un tableau à une dimension ; les sons stéréos sont moyennés pour ne faire qu'un canal"""
+
+
         if len(self.signal.shape) == 2:
             
             array_prov = (self.signal[:,0] + self.signal[:,1])/2
@@ -30,7 +35,9 @@ class Frequence:
         
         
 
-    def freq(self):
+    def fourier(self):
+        """définit la transformée de Fourier"""
+
 
         # avoir un seul canal
         sig = self.format_tableau()
@@ -46,6 +53,16 @@ class Frequence:
         # ne garder que les valeurs positives
         freq_pos = freq[:N//2]
 
+        return X_abs, freq_pos
+
+
+
+    def freq(self):
+        """calcule la fréquence du son en hertz selon la transformée de Fourier"""
+
+
+        X_abs, freq_pos = self.fourier()
+
         # trouver l'amplitude maximale
         val = np.max(X_abs)
         # trouver l'index de cette valeur
@@ -55,6 +72,31 @@ class Frequence:
         return freq_pos[val2]
                 
  
+    def graphique_fourier(self):
+
+        X_abs, freq_pos = self.fourier()
+
+        plt.plot(freq_pos, X_abs, label="Amplitude absolue")
+        plt.xlim(0, 6000)  # On réduit la plage des fréquences à la zone utile
+        plt.grid()
+        plt.xlabel(r"Fréquence (Hz)")
+        plt.ylabel(r"Amplitude $|X(f)|$")
+        plt.title("Transformée de Fourier")
+        plt.show()
+
+
+    def graphique_periodique(self,debut=0, fin=500):
+        plt.figure()
+        plt.grid()
+        plt.plot(self.signal[debut:fin])
+        plt.xlabel('temps fs')
+        plt.ylabel('amplitude')
+        plt.title("périodes de l'onde sonore")
+        plt.show()
+
+
+
+
 
 class FrequenceWave(Frequence):
     """Calcul de la fréquence d'une note ; le format d'entrée est un fichier wave"""
@@ -70,12 +112,16 @@ class FrequenceWave(Frequence):
 
 if __name__ == "__main__":
 
-    # nom_fichier = 'test.wav'
+    nom_fichier = 'test.wav'
     # nom_fichier = '1_la3.wav'
     # nom_fichier = '4_do3.wav'
-    fichier = os.path.join(os.getcwd(),'sons',nom_fichier)
+    nom_fichier = 'do3.wav'
+    fichier = os.path.join(os.getcwd(),'Documents','frequenceur', 'sons',nom_fichier)
       
     
     fr = FrequenceWave(fichier)
+
    
     print(fr.freq())
+
+    fr.graphique_periodique()
