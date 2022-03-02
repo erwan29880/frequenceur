@@ -57,9 +57,8 @@ class Frequence:
 
 
 
-    def freq(self):
+    def intensite_max_frequence(self):
         """calcule la fréquence du son en hertz selon la transformée de Fourier"""
-
 
         X_abs, freq_pos = self.fourier()
 
@@ -72,6 +71,29 @@ class Frequence:
         return freq_pos[val2]
                 
  
+    def freq(self, tableau=False):
+        """calcule la fréquence du son en hertz selon la transformée de Fourier"""
+
+        X_abs, freq_pos = self.fourier()
+
+        # trouver les index des amplitudes maximales par ordre croissant
+        val = np.argsort(X_abs)
+        
+        liste = []
+        # prendre les 10 derniers index de la liste val, et sauvegarder les frequences associèes dans une liste 
+        for i in range(-1, -10,-1 ):
+            arg = val[i]
+            liste.append(freq_pos[arg])
+            
+        if tableau == True:
+            return np.sort(liste)
+        else:        
+            min = np.min(liste)
+            return np.around(min, decimals = 2)
+        
+
+
+
     def graphique_fourier(self):
 
         X_abs, freq_pos = self.fourier()
@@ -115,13 +137,13 @@ if __name__ == "__main__":
     nom_fichier = 'test.wav'
     # nom_fichier = '1_la3.wav'
     # nom_fichier = '4_do3.wav'
-    nom_fichier = 'do3.wav'
-    fichier = os.path.join(os.getcwd(),'Documents','frequenceur', 'sons',nom_fichier)
+    # nom_fichier = 'do3.wav'
+    fichier = os.path.join(os.getcwd(),'sons',nom_fichier)
       
     
     fr = FrequenceWave(fichier)
-
-   
     print(fr.freq())
 
+    fr.graphique_fourier()
     fr.graphique_periodique()
+    

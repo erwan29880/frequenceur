@@ -13,7 +13,7 @@ class Record:
 
     def rec(self):
 
-        time.sleep(1)
+        time.sleep(2)
         recording = sd.rec(int(self.duration * self.freq), samplerate=self.freq, channels=2)
         sd.wait()  
         return recording
