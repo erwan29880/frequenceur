@@ -17,15 +17,17 @@ class Fen:
         
         # initialisation de la fenêtre
         self.root = tk.Tk()
-        self.root.minsize(1050,600)
         self.root["bg"] = "white"
        
         
         # définition de la taille des frames et canvas
-        self.width = 300
+        
         self.height = 300
         self.height_frame = 50
         self.y_note = 100
+        hauteur_fenetre = self.height + 2*(self.height_frame)
+        self.width = hauteur_fenetre
+        self.root.minsize(self.width,hauteur_fenetre)
         
         # initialisation des frames et canvas
         self.frame1 = tk.Frame(self.root)
@@ -133,23 +135,21 @@ class Fen:
     # placement des éléments dans la fenêtre
     def fen_princ(self):
 
-        self.menu_bar = tk.Menu(self.root)
-        self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
-        self.file_menu.add_command(label="Quitter", command=self.root.quit)
-        self.menu_bar.add_cascade(label="Fichier", menu=self.file_menu)
-        self.root.config(menu=self.menu_bar)
         self.canvas.pack()
         self.frame1.pack()
         self.frame2.pack()
-        self.canvas.create_oval(20,20,280,280, width=2,outline="black")
-        self.canvas.create_oval(30,30,270,270,width=2,outline="black")
 
-        # placement de la note dans le canvas
-        # taille = len(self.textevar_note)*self.size
-        # self.x = (self.width/2) - (taille/2) 
-        # y = (self.height/2) - taille
-        # self.var2 = tk.Label(self.canvas, text = self.textevar_note, font=self.font1)
-        # self.var2.place(x = self.x, y = self.y_note)
+        # mise en forme du graphisme cercle
+        x1 = 55
+        y1 = 20
+        x2 = self.width - x1
+        y2 = self.height - y1 
+
+        padding = 10
+
+        self.canvas.create_oval(x1, y1, x2, y2, width=2,outline="black")
+        self.canvas.create_oval(x1+padding, y1+padding, x2-padding, y2-padding, width=2,outline="black")
+        
 
         # pré-placement de la différence en hertz 
         self.var = tk.Label(self.frame1, textvariable=self.textevar, font=self.font2)
