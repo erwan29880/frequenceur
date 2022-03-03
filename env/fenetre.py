@@ -5,22 +5,21 @@ from record import Record
 from frequence_note import Frequence_note
 import os
 import numpy
+from tkinter import filedialog
 
 
 
 class Fen:
 
 
-    def __init__(self, size):
+    def __init__(self):
 
+        
         # initialisation de la fenêtre
         self.root = tk.Tk()
         self.root.minsize(1050,600)
         self.root["bg"] = "white"
-
-        # définition de la taille des polices
-        self.size = 60
-        self.size2 = 20
+       
         
         # définition de la taille des frames et canvas
         self.width = 300
@@ -41,36 +40,48 @@ class Fen:
         self.canvas.config(width=self.width, height=self.height)
         self.canvas["bg"] = "grey"
 
+
+        # définition de la taille des polices
+        self.size = 60
+        self.size2 = 20
+
+        # grande police puis petite police
+        self.font1 = tkFont.Font( family = "Arial" , size = self.size )
+        self.font2 = tkFont.Font( family = "Arial" , size = self.size2, weight='bold' )
+
         # création d'une variable de texte pour l'erreur en hertz
         self.textevar = tk.StringVar()
         self.textevar.set("")
         self.var = None
+
+        self.note_var = tk.StringVar()
+        self.note_var.set("")
+        self.canvas_note = tk.Label(self.canvas, textvariable = self.note_var, font=self.font1)
+
         
-        # grande police puis petite police
-        self.font1 = tkFont.Font ( family = "Arial" , size = self.size )
-        self.font2 = tkFont.Font ( family = "Arial" , size = self.size2, weight='bold' )
+
 
 
     # analyse d'un son à partir d'un fichier wave
     def analyse_son(self):
     
-        # fichier wave à analyser :
-        nom_fichier = 'sol3.wav'
-        fichier = os.path.join(os.getcwd(),'env','sons',nom_fichier)
+        # ouvrir un fichier wave pour analyse
+        song = filedialog.askopenfilename(initialdir='/home/erwan/Musique', title="choisissez un fichier", filetypes=[('wave Files', '*.wav')])
 
         # lit le fichier et retourne un tableau numpy
-        fr = FrequenceWave(fichier).freq()
+        fr = FrequenceWave(song).freq()
 
+        # retourne la note
         texte = Frequence_note(fr).determiner_note
 
 
-
+        # affichage de la note      
         taille = len(texte)*self.size
         x = (self.width/2) - (taille/2) 
-        y = (self.height/2) - taille
-        tk.Label(self.canvas, text = texte, font=self.font1).place(x = x, y = self.y_note)
+        self.note_var.set(texte)
+        self.canvas_note.place(x = x, y = self.y_note)
 
-
+        # mise en forme de la différence de fréquence
         texteBrut = Frequence_note(fr).determiner_frequence_la_plus_proche[0]
         texteBrut = str(texteBrut)
         texte = texteBrut.replace('.', ',')
@@ -78,7 +89,10 @@ class Fen:
             texte = '+' + texte
         texte = texte + 'Hertz'
 
+        # changement de texte pour la fréquence
         self.textevar.set(texte)
+        
+        
 
 
 
@@ -93,13 +107,15 @@ class Fen:
         # affiche la note correspondante
         texte = Frequence_note(fr).determiner_note
 
-        # déterminer l'abscisse de la note
+        # changement de texte pour la note
+        # affichage de la note      
         taille = len(texte)*self.size
         x = (self.width/2) - (taille/2) 
-        # affichage de la note
-        tk.Label(self.canvas, text = texte, font=self.font1).place(x = x, y = self.y_note)
+        self.note_var.set(texte)
+        self.canvas_note.place(x = x, y = self.y_note)
 
-        # affichage de la différence d'accordage en hertz
+        
+        # affichage de la différence d'accordage en hertz : mise en feorme du texte et affichage
         texteBrut = Frequence_note(fr).determiner_frequence_la_plus_proche[0]
         texteBrut = str(texteBrut)
         texte = texteBrut.replace('.', ',')
@@ -128,6 +144,14 @@ class Fen:
         self.canvas.create_oval(20,20,280,280, width=2,outline="black")
         self.canvas.create_oval(30,30,270,270,width=2,outline="black")
 
+        # placement de la note dans le canvas
+        # taille = len(self.textevar_note)*self.size
+        # self.x = (self.width/2) - (taille/2) 
+        # y = (self.height/2) - taille
+        # self.var2 = tk.Label(self.canvas, text = self.textevar_note, font=self.font1)
+        # self.var2.place(x = self.x, y = self.y_note)
+
+        # pré-placement de la différence en hertz 
         self.var = tk.Label(self.frame1, textvariable=self.textevar, font=self.font2)
         self.var.pack()
 
@@ -136,7 +160,10 @@ class Fen:
         button = tk.Button(self.frame2, text='rec', command = self.enregistrement)
         button.grid(column=1, row=0)
 
-    
+
+
+    def rafraichir(self) :
+        self.canvas.update_idletasks()
 
 
     # lancement de l'affichage
@@ -145,7 +172,7 @@ class Fen:
     
 
 if __name__ == "__main__":
-    fen = Fen(10)
+    fen = Fen()
     fen.fen_princ()
     
     fen.afficher()
