@@ -83,13 +83,19 @@ class Frequence:
         # prendre les 10 derniers index de la liste val, et sauvegarder les frequences associèes dans une liste 
         for i in range(-1, -10,-1 ):
             arg = val[i]
-            liste.append(freq_pos[arg])
-            
+
+            if freq_pos[arg] >= 55 :  # 55hz est la première fréquence dans le tableau des notes/fréquences
+                liste.append(freq_pos[arg])
+        
         if tableau == True:
             return np.sort(liste)
         else:        
             min = np.min(liste)
-            return np.around(min, decimals = 2)
+            
+            liste2 = [x for x in liste if x < (min+2)]
+             
+
+            return np.around(np.mean(liste2), decimals = 2)
         
 
 
@@ -134,16 +140,20 @@ class FrequenceWave(Frequence):
 
 if __name__ == "__main__":
 
-    nom_fichier = 'test.wav'
+    # nom_fichier = 'test.wav'
     # nom_fichier = '1_la3.wav'
     # nom_fichier = '4_do3.wav'
     # nom_fichier = 'do3.wav'
+    nom_fichier = 'SI.wav'
+    # nom_fichier = '12_lab3.wav'
     fichier = os.path.join(os.getcwd(),'sons',nom_fichier)
       
     
     fr = FrequenceWave(fichier)
     print(fr.freq())
 
-    fr.graphique_fourier()
-    fr.graphique_periodique()
+    # print(fr.intensite_max_frequence())
+    
+    # fr.graphique_fourier()
+    # fr.graphique_periodique()
     

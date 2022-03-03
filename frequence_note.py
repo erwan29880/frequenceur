@@ -38,15 +38,17 @@ class Frequence_note(Note):
         note_inferieure = self.valeurs[k-1]
         moyenne = (note_superieure + note_inferieure)/2
 
+        # note plus proche de la note inférieure
         if self.fr <= moyenne:
             val = note_inferieure
             position = k-1
-            diff_hertz = self.fr - note_inferieure
+            
+        # note plus proche de la note supérieure    
         else:
             val = note_superieure
-            diff_hertz = note_superieure - self.fr
             position = k
 
+        diff_hertz = self.fr - val
         diff_hertz = numpy.around(diff_hertz, decimals=3)
 
         return diff_hertz, val, position
@@ -71,11 +73,16 @@ if __name__ == "__main__":
 
     # fichier wave à analyser :
     # décocher une ligne dans __init__
-    nom_fichier = 'fa3.wav'
+    nom_fichier = 'mi3.wav'
+    # nom_fichier = '12_lab3.wav'
+    nom_fichier = 'SI.wav'
     fichier = os.path.join(os.getcwd(),'sons', nom_fichier)
 
+    
 
     clf = Frequence_note(fichier, prod=False)
+    print(clf.fr)
+    print(clf.fr)
     print(clf.determiner_frequence_la_plus_proche)
     
     print(clf.determiner_note)
