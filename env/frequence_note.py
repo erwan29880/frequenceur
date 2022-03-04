@@ -59,6 +59,21 @@ class Frequence_note(Note):
         return diff_hertz, val, position
            
 
+    
+    @property
+    def déterminer_erreur(self):
+        diff_hertz = self.determiner_frequence_la_plus_proche[0]
+        position = self.determiner_frequence_la_plus_proche[2]
+        # calcule le pourcentage d'erreur par rapport à la fréquence juste
+        if diff_hertz > 0:
+            return diff_hertz/(self.valeurs[position + 1] - self.valeurs[position])
+        elif diff_hertz < 0:
+            return numpy.abs(diff_hertz)/(self.valeurs[position] - self.valeurs[position - 1])
+        else:
+            return 0.0
+        
+
+
     @property
     def determiner_note(self):
         diff_hertz = self.determiner_frequence_la_plus_proche[0]
@@ -82,10 +97,10 @@ if __name__ == "__main__":
 
     # fichier wave à analyser :
     # décocher une ligne dans __init__
-    # nom_fichier = 'mi3.wav'
+    nom_fichier = 'mi3.wav'
     # nom_fichier = '12_lab3.wav'
-    nom_fichier = 'SI.wav'
-    nom_fichier = 'sol3.wav'
+    # nom_fichier = 'SI.wav'
+    # nom_fichier = 'sol3.wav'
     fichier = os.path.join(os.getcwd(),'env','sons', nom_fichier)
 
     
@@ -94,7 +109,7 @@ if __name__ == "__main__":
     
     print(clf.fr)
     # print(clf.determiner_frequence_la_plus_proche[0])
-    
+    print(clf.déterminer_erreur)
 
     
     print(clf.determiner_note)

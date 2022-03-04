@@ -14,12 +14,15 @@ class Fen:
 
     def __init__(self):
 
-        
+        # couleurs 
+        self.couleur1 = "#E5E7E9"   #gris clair
+        self.couleur2 = "grey"
+
         # initialisation de la fenêtre
         self.root = tk.Tk()
-        self.root["bg"] = "white"
-       
-        
+        self.root["bg"] = self.couleur1
+           
+
         # définition de la taille des frames et canvas
         
         self.height = 300
@@ -31,16 +34,16 @@ class Fen:
         
         # initialisation des frames et canvas
         self.frame1 = tk.Frame(self.root)
-        self.frame1["bg"] = "white"
+        self.frame1["bg"] = self.couleur1
         self.frame1.config(width=self.width, height=self.height_frame)
 
         self.frame2 = tk.Frame(self.root)
-        self.frame2["bg"] = "white"
+        self.frame2["bg"] = self.couleur1
         self.frame2.config(width=self.width, height=self.height_frame)
 
         self.canvas = tk.Canvas(self.root)
         self.canvas.config(width=self.width, height=self.height)
-        self.canvas["bg"] = "grey"
+        self.canvas["bg"] = self.couleur2
 
 
         # définition de la taille des polices
@@ -56,9 +59,11 @@ class Fen:
         self.textevar.set("")
         self.var = None
 
+        # création d'une variable de texte pour l'affichage de la note
         self.note_var = tk.StringVar()
         self.note_var.set("")
         self.canvas_note = tk.Label(self.canvas, textvariable = self.note_var, font=self.font1)
+        self.canvas_note['bg'] = self.couleur2
 
         
 
@@ -68,7 +73,7 @@ class Fen:
     def analyse_son(self):
     
         # ouvrir un fichier wave pour analyse
-        song = filedialog.askopenfilename(initialdir='/home/erwan/Musique', title="choisissez un fichier", filetypes=[('wave Files', '*.wav')])
+        song = filedialog.askopenfilename(initialdir='/home/erwan/Documents/frequenceur/env/sons', title="choisissez un fichier", filetypes=[('wave Files', '*.wav')])
 
         # lit le fichier et retourne un tableau numpy
         fr = FrequenceWave(song).freq()
@@ -90,6 +95,12 @@ class Fen:
         if not texte.startswith('-'):
             texte = '+' + texte
         texte = texte + 'Hertz'
+
+        erreur = Frequence_note(fr).déterminer_erreur
+        erreur = numpy.around(erreur,decimals=4 )
+        erreur = str(erreur)
+
+        texte = f'{texte} - {erreur}% '
 
         # changement de texte pour la fréquence
         self.textevar.set(texte)
@@ -125,6 +136,12 @@ class Fen:
             texte = '+' + texte
         texte = texte + 'Hertz'
 
+        erreur = Frequence_note(fr).déterminer_erreur
+        erreur = numpy.around(erreur,decimals=4 )
+        erreur = str(erreur)
+
+        texte = f'{texte} - {erreur}% '
+
         self.textevar.set(texte)
 
 
@@ -153,6 +170,7 @@ class Fen:
 
         # pré-placement de la différence en hertz 
         self.var = tk.Label(self.frame1, textvariable=self.textevar, font=self.font2)
+        self.var['bg'] = self.couleur1
         self.var.pack()
 
         button = tk.Button(self.frame2, text='lancer', command = self.analyse_son)

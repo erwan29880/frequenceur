@@ -1,5 +1,12 @@
 import pandas
+import os
 
-df = pandas.read_csv('sons/notes.csv')
+
+dossier  = os.getcwd()
+
+path = os.path.join(dossier, 'env', 'sons','notes.csv')
+# print(dossier)
+
+df = pandas.read_csv(path)
 
 print(df)
